@@ -6,6 +6,8 @@ const int stepPin1 = 2;
 const int dirPin1 = 3; //steper H
 const int stepPin2 = 4;
 const int dirPin2 = 5;
+Stepper myStepperH(stepsPerRevolution, stepPin1, dirPin1);
+Stepper myStepperV(stepsPerRevolution, stepPin2, dirPin2);
 #define Vpratique 1 // Pas necessaire pour deplacer d'une case à une suivante
 int PUSH_BUTTON = 10; //presser le bouton
 int Aimant = 11; // ou des sorties pwm
@@ -38,9 +40,10 @@ void setup() {
 }
 
 void loop() {
-  if(PUSH_BUTTON==1){
-    void deplacement(char Dep[2],char Arr[2]);
-    void RetourPinitial(char Arr[]); //on se trouve a la position d'arrivée pour aller tout en haut à gauche
+  delay(100);
+  if(digitalRead(PUSH_BUTTON)==HIGH){
+    deplacement(char Dep[2],char Arr[2]);
+    RetourPinitial(char Arr[]); //on se trouve a la position d'arrivée pour aller tout en haut à gauche
   }
   delay(1000);
   
