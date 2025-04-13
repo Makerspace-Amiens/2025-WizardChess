@@ -1,80 +1,91 @@
 #include <Arduino.h>
+#include <AccelStepper.h>  // Utilisation de AccelStepper au lieu de Stepper
 #include <ctype.h> // pour la fonction isupper
-const int stepsPerRevolution=2000;
-const int pasParMinute = 15; // La plage réglable du pas à pas est de 0 à 17
-const int stepPin1 = 2;
-const int dirPin1 = 3; //steper H
-const int stepPin2 = 4;
-const int dirPin2 = 5;
-Stepper myStepperH(stepsPerRevolution, stepPin1, dirPin1);
-Stepper myStepperV(stepsPerRevolution, stepPin2, dirPin2);
-#define Vpratique 1 // Pas necessaire pour deplacer d'une case à une suivante
-int PUSH_BUTTON = 10; //presser le bouton
-int Aimant = 11; // ou des sorties pwm
-char Dep[] ="B1";
-char Arr[] ="C1";
+
+const int stepsPerRevolution = 2000;  // Nombre de pas par révolution pour votre moteur
+const int pasParMinute = 15;          // Vitesse du moteur (ajustable)
+const int Vpratique = 1;              // Facteur de vitesse (utilisé pour ajuster le temps)
+
+int PUSH_BUTTON = 10;  // Bouton pour actionner le déplacement
+int Aimant = 11;       // Sortie pour l'électro-aimant
+
+char Dep[] = "B1";
+char Arr[] = "C1";
+
 int Choriz;
 int Cvert;
 int PoseActuel[2];
 char echiquier[8][8] = {
-  {'T','C','F','D','R','F','C','T'},
-  {'P','P','P','P','P','P','P','P'},
+  {'T', 'C', 'F', 'D', 'R', 'F', 'C', 'T'},
+  {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
-  {'p','p','p','p','p','p','p','p'},
-  {'t','c','f','d','r','f','c','r'}
-};      /* verifier si le caractere est une majuscule: if(isupper(char)){
-  printf("le charest une majuscule")}
- verifier si le caractere est une minuscule:  if
+  {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
+  {'t', 'c', 'f', 'd', 'r', 'f', 'c', 'r'}
+};
 
-*/
+// Définir les pins pour les moteurs (basé sur CNC Shield)
+const int stepPinX = 2;  // X Step
+const int dirPinX = 5;   // X Direction
+const int stepPinY = 3;  // Y Step
+const int dirPinY = 4;   // Y Direction
+
+AccelStepper myStepperX(AccelStepper::DRIVER, stepPinX, dirPinX);  // Initialiser pour X
+AccelStepper myStepperY(AccelStepper::DRIVER, stepPinY, dirPinY);  // Initialiser pour Y
+
 void setup() {
-  pinMode(PUSH_BUTTON,INPUT);
-  pinMode(stepPin1, OUTPUT);
-  pinMode(dirPin1, OUTPUT);
-  pinMode(stepPin2, OUTPUT);
-  pinMode(dirPin2, OUTPUT);
+  pinMode(PUSH_BUTTON, INPUT);
+  pinMode(Aimant, OUTPUT);
+  
+  // Configuration de la vitesse et de l'accélération des moteurs
+  myStepperX.setMaxSpeed(1000);  // Définir la vitesse maximale du moteur X
+  myStepperX.setAcceleration(500);  // Définir l'accélération du moteur X
+  
+  myStepperY.setMaxSpeed(1000);  // Définir la vitesse maximale du moteur Y
+  myStepperY.setAcceleration(500);  // Définir l'accélération du moteur Y
+  
   Serial.begin(9600);
+}
+
+void RetourPinitial(char Arr[]) {
+  myStepperY.moveTo((Arr[0] - 1 - 64) * Vpratique);
+  myStepperY.runToPosition();
+  myStepperX.moveTo((Arr[1] - '0' - 1) * Vpratique);
+  myStepperX.runToPosition();
+}
+
+void deplacement(char Dep[], char Arr[]) {
+  int Cvert = Arr[0] - Dep[0];
+  int Choriz = Arr[1] - Dep[1];
+
+  digitalWrite(Aimant, HIGH);  // Activer l'électro-aimant
+
+  // Déplacer en X
+  myStepperX.moveTo(Choriz * Vpratique);
+  while (myStepperX.isRunning()) {
+    myStepperX.run();
+  }
+
+  // Déplacer en Y
+  myStepperY.moveTo(Cvert * Vpratique);
+  while (myStepperY.isRunning()) {
+    myStepperY.run();
+  }
+
+  delay(200);  // Attendre un peu
+  digitalWrite(Aimant, LOW);  // Désactiver l'électro-aimant
 }
 
 void loop() {
   delay(100);
-  if(digitalRead(PUSH_BUTTON)==HIGH){
-    deplacement(char Dep[2],char Arr[2]);
-    RetourPinitial(char Arr[]); //on se trouve a la position d'arrivée pour aller tout en haut à gauche
-  }
-  delay(1000);
-  
+
+  // Effectuer le déplacement de la pièce
+  deplacement(Dep, Arr);
+
+  // Retour à la position initiale
+  RetourPinitial(Arr);
+
+  delay(1000);  // Pause avant le prochain mouvement
 }
-
-// echiquier (ou mettre analogread(captX) sur chaque case pour savoir lesquels sont occupés par une pièce mis a part les pieces noires automatisés et celles de la partie blanche initiale: que 32 capteurs )
-
-
-void RetourPinitial(char Arr[]){
-  digitalWrite(dirPin1, HIGH); // Active la rotation dans le sens horaire
-  delayMicroseconds((-Arr[0]-1-64)*Vpratique);
-  myStepperV.step((-Arr[1]-1-'0')*Vpratique);
-}
-void deplacement(char Dep[2],char Arr[2]){  //placement de l'electro aimant tout en haut à gauche
-  digitalWrite(dirPin1, HIGH);
-  delayMicroseconds((Dep[0]-65)*Vpratique);
-  //il faut arreter le moteur
-  digitalWrite(dirPin2, HIGH);
-  delayMicroseconds((Dep[1]-'0'-1)*Vpratique);//deplacement à la destination de départ
-  Cvert=Arr[0]-Dep[0];
-  Choriz=Arr[1]-Dep[1];
-  digitalWrite(Aimant,HIGH);
-  myStepperH.step(0.5*Vpratique);
-  delay(200);
-  myStepperH.step(Cvert*Vpratique); // valeur ascii de 'A' est 65
-  delay(200);
-  myStepperV.step(Choriz*Vpratique); // A1 tout à gauche
-  delay(200);
-  digitalWrite(dirPin1, LOW);
-  delayMicroseconds(0.5*Vpratique);
-  digitalWrite(Aimant,LOW);
-}
-
-// RESTE A INTRODUIRE LA PARTIE VERIFICATION DES COUPS
