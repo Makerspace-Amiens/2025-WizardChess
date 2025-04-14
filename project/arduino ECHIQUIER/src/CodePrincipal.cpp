@@ -23,7 +23,7 @@ char echiquier[8][8] = {
   {0, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 0, 0, 0, 0},
   {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-  {'t', 'c', 'f', 'd', 'r', 'f', 'c', 'r'}
+  {'t', 'c', 'f', 'd', 'r', 'f', 'c', 't'}
 };
 
 // Définir les pins pour les moteurs (basé sur CNC Shield)
