@@ -1,14 +1,16 @@
 #include <Arduino.h>
 #include <AccelStepper.h>  // Utilisation de AccelStepper au lieu de Stepper
 #include <ctype.h> // pour la fonction isupper
-
+#define STEP_PIN_X    2   // Broche STEP pour le moteur X (en fonction de votre shield CNC)
+#define DIR_PIN_X     5   // Broche DIR pour le moteur X (en fonction de votre shield CNC)
+#define ENABLE_PIN  8   // Broche ENABLE pour le moteur X (optionnel selon votre shield)
+#define STEP_PIN_Y    3   // Broche STEP pour le moteur Y (sur CNC Shield V6)
+#define DIR_PIN_Y     6   // Broche DIR pour le moteur Y (sur CNC Shield V6)
 const int stepsPerRevolution = 2000;  // Nombre de pas par révolution pour votre moteur
 const int pasParMinute = 15;          // Vitesse du moteur (ajustable)
 const int Vpratique = 1;              // Facteur de vitesse (utilisé pour ajuster le temps)
 
 int PUSH_BUTTON = 10;  // Bouton pour actionner le déplacement
-int Aimant = 11;       // Sortie pour l'électro-aimant
-
 char Dep[] = "B1";
 char Arr[] = "C1";
 
@@ -37,14 +39,18 @@ AccelStepper myStepperY(AccelStepper::DRIVER, stepPinY, dirPinY);  // Initialise
 
 void setup() {
   pinMode(PUSH_BUTTON, INPUT);
-  pinMode(Aimant, OUTPUT);
+  delay(100);
+  pinMode(STEP_PIN_X, OUTPUT);
+  pinMode(DIR_PIN_Y, OUTPUT);
+  pinMode(ENABLE_PIN, OUTPUT);
+  pinMode(STEP_PIN_X, OUTPUT);
+  pinMode(DIR_PIN_X, OUTPUT);
+
+    // Désactivation des moteurs (ENABLE_PIN)
+    digitalWrite(ENABLE_PIN, LOW);
   
-  // Configuration de la vitesse et de l'accélération des moteurs
-  myStepperX.setMaxSpeed(1000);  // Définir la vitesse maximale du moteur X
-  myStepperX.setAcceleration(500);  // Définir l'accélération du moteur X
-  
-  myStepperY.setMaxSpeed(1000);  // Définir la vitesse maximale du moteur Y
-  myStepperY.setAcceleration(500);  // Définir l'accélération du moteur Y
+    // Définir la direction du moteur (vers l'avant ou vers l'arrière)
+    digitalWrite(DIR_PIN_X, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
   
   Serial.begin(9600);
 }
@@ -83,7 +89,7 @@ void loop() {
 
   // Effectuer le déplacement de la pièce
   deplacement(Dep, Arr);
-
+  delay(1000);
   // Retour à la position initiale
   RetourPinitial(Arr);
 
