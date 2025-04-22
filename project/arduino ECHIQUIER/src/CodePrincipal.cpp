@@ -3,11 +3,19 @@
 #include <ctype.h> // pour la fonction isupper
 #define STEP_PIN_X    2   // Broche STEP pour le moteur X (en fonction de votre shield CNC)
 #define DIR_PIN_X     5   // Broche DIR pour le moteur X (en fonction de votre shield CNC)
-#define ENABLE_PIN  8   // Broche ENABLE pour le moteur X (optionnel selon votre shield)
-#define STEP_PIN_Y    3   // Broche STEP pour le moteur Y (sur CNC Shield V6)
-#define DIR_PIN_Y     6   // Broche DIR pour le moteur Y (sur CNC Shield V6)
-const int stepsPerRevolution = 2000;  // Nombre de pas par révolution pour votre moteur
-const int pasParMinute = 15;          // Vitesse du moteur (ajustable)
+#define ENABLE_PIN_X  8   // Broche ENABLE pour le moteur X (optionnel selon votre shield)
+int Vactivation =1; // distance experimentale pour connecter l aimantation
+
+#define STEP_PIN_Y 3
+#define DIR_PIN_Y 6
+#define ENABLE_PIN_Y    9
+
+#define STEP_PIN_Z    4   
+#define DIR_PIN_Z     7 
+#define ENABLE_PIN_Z    12  
+
+#define STEPS_PER_REV 200 // Nombre de pas pour une révolution complète (à ajuster selon votre moteur)
+#define RPM           60  // Vitesse du moteur en tours par minute
 const int Vpratique = 1;              // Facteur de vitesse (utilisé pour ajuster le temps)
 
 int PUSH_BUTTON = 10;  // Bouton pour actionner le déplacement
@@ -28,60 +36,72 @@ char echiquier[8][8] = {
   {'t', 'c', 'f', 'd', 'r', 'f', 'c', 't'}
 };
 
-// Définir les pins pour les moteurs (basé sur CNC Shield)
-const int stepPinX = 2;  // X Step
-const int dirPinX = 5;   // X Direction
-const int stepPinY = 3;  // Y Step
-const int dirPinY = 4;   // Y Direction
-
-AccelStepper myStepperX(AccelStepper::DRIVER, stepPinX, dirPinX);  // Initialiser pour X
-AccelStepper myStepperY(AccelStepper::DRIVER, stepPinY, dirPinY);  // Initialiser pour Y
 
 void setup() {
   pinMode(PUSH_BUTTON, INPUT);
   delay(100);
   pinMode(STEP_PIN_X, OUTPUT);
-  pinMode(DIR_PIN_Y, OUTPUT);
-  pinMode(ENABLE_PIN, OUTPUT);
-  pinMode(STEP_PIN_X, OUTPUT);
   pinMode(DIR_PIN_X, OUTPUT);
+  pinMode(ENABLE_PIN_X, OUTPUT);
+
+  pinMode(STEP_PIN_Y, OUTPUT);
+  pinMode(DIR_PIN_Y, OUTPUT);
+  pinMode(ENABLE_PIN_Y, OUTPUT);
+
+  pinMode(STEP_PIN_Z, OUTPUT);
+  pinMode(DIR_PIN_Z, OUTPUT);
+  pinMode(ENABLE_PIN_Z, OUTPUT);
 
     // Désactivation des moteurs (ENABLE_PIN)
-    digitalWrite(ENABLE_PIN, LOW);
-  
+    digitalWrite(ENABLE_PIN_X, LOW);
+    digitalWrite(ENABLE_PIN_Y, LOW);
+    digitalWrite(ENABLE_PIN_Z, LOW);
     // Définir la direction du moteur (vers l'avant ou vers l'arrière)
     digitalWrite(DIR_PIN_X, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
-  
+    digitalWrite(DIR_PIN_Y, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
+  digitalWrite(DIR_PIN_Z, HIGH); 
   Serial.begin(9600);
 }
 
 void RetourPinitial(char Arr[]) {
-  myStepperY.moveTo((Arr[0] - 1 - 64) * Vpratique);
-  myStepperY.runToPosition();
-  myStepperX.moveTo((Arr[1] - '0' - 1) * Vpratique);
-  myStepperX.runToPosition();
+  digitalWrite(STEP_PIN_X, HIGH);  // Envoi d'un pas
+    delayMicroseconds((60000000*(Arr[0] - 1 - 64) * Vpratique) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
+    digitalWrite(STEP_PIN_X, LOW);   // Fin du pas
+    delayMicroseconds(60000000 / (STEPS_PER_REV * RPM));  // Attente entre les pas
+    digitalWrite(STEP_PIN_Y, HIGH);  // Envoi d'un pas
+    delayMicroseconds((60000000*(Arr[1] - '0' - 1) * Vpratique) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
+    digitalWrite(STEP_PIN_Y, LOW);   // Fin du pas
+    delayMicroseconds(60000000 / (STEPS_PER_REV * RPM));
 }
 
 void deplacement(char Dep[], char Arr[]) {
-  int Cvert = Arr[0] - Dep[0];
-  int Choriz = Arr[1] - Dep[1];
+  Cvert = Arr[0] - Dep[0];
+  Choriz = Arr[1] - Dep[1];
 
-  digitalWrite(Aimant, HIGH);  // Activer l'électro-aimant
+//activer l aimantation (axe Z)
+  digitalWrite(STEP_PIN_Z, HIGH);  // Envoi d'un pas
+  delayMicroseconds((Vactivation) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
+  digitalWrite(STEP_PIN_Z, LOW);   // Fin du pas
+  delayMicroseconds(60000000 / (STEPS_PER_REV * RPM));
+}
 
   // Déplacer en X
-  myStepperX.moveTo(Choriz * Vpratique);
-  while (myStepperX.isRunning()) {
-    myStepperX.run();
-  }
+  digitalWrite(STEP_PIN_X, HIGH);  // Envoi d'un pas
+  delayMicroseconds((60000000*CHoriz * Vpratique) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
+  digitalWrite(STEP_PIN_X, LOW);
+
+  delay(100);
 
   // Déplacer en Y
-  myStepperY.moveTo(Cvert * Vpratique);
-  while (myStepperY.isRunning()) {
-    myStepperY.run();
-  }
+  digitalWrite(STEP_PIN_Y, HIGH);  // Envoi d'un pas
+  delayMicroseconds((Cvert*Vpratique) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
+  digitalWrite(STEP_PIN_Y, LOW);   // Fin du pas
 
   delay(200);  // Attendre un peu
-  digitalWrite(Aimant, LOW);  // Désactiver l'électro-aimant
+  digitalWrite(DIR_PIN_Z, !digitalRead(DIR_PIN_Z));  // Inverser la direction  // Désactiver l'électro-aimant
+  digitalWrite(STEP_PIN_Z, HIGH);  // Envoi d'un pas
+  delayMicroseconds((Vactivation) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
+  digitalWrite(STEP_PIN_Z, LOW);   // Fin du pas
 }
 
 void loop() {
