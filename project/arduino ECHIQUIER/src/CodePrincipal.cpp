@@ -4,15 +4,14 @@
 #define STEP_PIN_X    2   // Broche STEP pour le moteur X (en fonction de votre shield CNC)
 #define DIR_PIN_X     5   // Broche DIR pour le moteur X (en fonction de votre shield CNC)
 #define ENABLE_PIN_X  8   // Broche ENABLE pour le moteur X (optionnel selon votre shield)
-int Vactivation =1; // distance experimentale pour connecter l aimantation
+#include <Servo.h>
+
+Servo monServo;
 
 #define STEP_PIN_Y 3
 #define DIR_PIN_Y 6
 #define ENABLE_PIN_Y    9
 
-#define STEP_PIN_Z    4   
-#define DIR_PIN_Z     7 
-#define ENABLE_PIN_Z    12  
 
 #define STEPS_PER_REV 200 // Nombre de pas pour une révolution complète (à ajuster selon votre moteur)
 #define RPM           60  // Vitesse du moteur en tours par minute
@@ -39,6 +38,7 @@ char echiquier[8][8] = {
 
 void setup() {
   pinMode(PUSH_BUTTON, INPUT);
+  monServo.attach(12); // pin D11 pour le signal
   delay(100);
   pinMode(STEP_PIN_X, OUTPUT);
   pinMode(DIR_PIN_X, OUTPUT);
@@ -48,18 +48,13 @@ void setup() {
   pinMode(DIR_PIN_Y, OUTPUT);
   pinMode(ENABLE_PIN_Y, OUTPUT);
 
-  pinMode(STEP_PIN_Z, OUTPUT);
-  pinMode(DIR_PIN_Z, OUTPUT);
-  pinMode(ENABLE_PIN_Z, OUTPUT);
 
     // Désactivation des moteurs (ENABLE_PIN)
     digitalWrite(ENABLE_PIN_X, LOW);
     digitalWrite(ENABLE_PIN_Y, LOW);
-    digitalWrite(ENABLE_PIN_Z, LOW);
     // Définir la direction du moteur (vers l'avant ou vers l'arrière)
     digitalWrite(DIR_PIN_X, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
     digitalWrite(DIR_PIN_Y, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
-  digitalWrite(DIR_PIN_Z, HIGH); 
   Serial.begin(9600);
 }
 
@@ -79,15 +74,13 @@ void deplacement(char Dep[], char Arr[]) {
   Choriz = Arr[1] - Dep[1];
 
 //activer l aimantation (axe Z)
-  digitalWrite(STEP_PIN_Z, HIGH);  // Envoi d'un pas
-  delayMicroseconds((Vactivation) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
-  digitalWrite(STEP_PIN_Z, LOW);   // Fin du pas
-  delayMicroseconds(60000000 / (STEPS_PER_REV * RPM));
-}
+  monServo.write(100);
+  delay(100);
+
 
   // Déplacer en X
   digitalWrite(STEP_PIN_X, HIGH);  // Envoi d'un pas
-  delayMicroseconds((60000000*CHoriz * Vpratique) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
+  delayMicroseconds((60000000*Choriz * Vpratique) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
   digitalWrite(STEP_PIN_X, LOW);
 
   delay(100);
@@ -98,10 +91,8 @@ void deplacement(char Dep[], char Arr[]) {
   digitalWrite(STEP_PIN_Y, LOW);   // Fin du pas
 
   delay(200);  // Attendre un peu
-  digitalWrite(DIR_PIN_Z, !digitalRead(DIR_PIN_Z));  // Inverser la direction  // Désactiver l'électro-aimant
-  digitalWrite(STEP_PIN_Z, HIGH);  // Envoi d'un pas
-  delayMicroseconds((Vactivation) / (STEPS_PER_REV * RPM));  // Attente pour contrôler la vitesse (en microsecondes)
-  digitalWrite(STEP_PIN_Z, LOW);   // Fin du pas
+  delay(1000);
+  monServo.write(40); //desactive l'aimantation
 }
 
 void loop() {
