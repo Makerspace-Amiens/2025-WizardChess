@@ -6,7 +6,11 @@
 
 #define STEP_PIN_Y 3
 #define DIR_PIN_Y 6
+#define ENABLE_PIN_Y    9
 
+#define STEP_PIN_Z    4   
+#define DIR_PIN_Z     7 
+#define ENABLE_PIN_Z    12  
 // Paramètres pour le moteur pas à pas
 #define STEPS_PER_REV 200 // Nombre de pas pour une révolution complète (à ajuster selon votre moteur)
 #define RPM           60  // Vitesse du moteur en tours par minute
@@ -16,15 +20,22 @@ void setup() {
   delay(100);
   pinMode(STEP_PIN_Y, OUTPUT);
   pinMode(DIR_PIN_Y, OUTPUT);
+  pinMode(ENABLE_PIN_Y,OUTPUT);
   pinMode(STEP_PIN_X, OUTPUT);
   pinMode(DIR_PIN_X, OUTPUT);
   pinMode(ENABLE_PIN_X, OUTPUT);
+  pinMode(STEP_PIN_Z, OUTPUT);
+  pinMode(DIR_PIN_Z, OUTPUT);
+  pinMode(ENABLE_PIN_Z, OUTPUT);
   
   // Désactivation du moteur (ENABLE_PIN_X)
   digitalWrite(ENABLE_PIN_X, LOW);
-  
+  digitalWrite(ENABLE_PIN_Y, LOW);
+  digitalWrite(ENABLE_PIN_Z, LOW);
   // Définir la direction du moteur (vers l'avant ou vers l'arrière)
   digitalWrite(DIR_PIN_X, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
+  digitalWrite(DIR_PIN_X, HIGH); 
+  digitalWrite(DIR_PIN_X, HIGH); 
 }
 
 void loop() {
