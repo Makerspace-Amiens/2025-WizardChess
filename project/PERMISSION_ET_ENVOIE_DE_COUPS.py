@@ -161,6 +161,27 @@ for move in mouvements_blancs:
 print("\nMouvements possibles des pions noirs :")
 for move in mouvements_noirs:
     print(f"De {move[0]} à {move[1]}")
+# LOGIQUE POUR CONTOURNER LES PIONS DE FACE
+def trouver_detour(origine, destination):
+    x1, y1 = origine
+    x2, y2 = destination
+
+    if plateau[x1 + 1][y1] != " ":
+        # case devant occupée
+        directions = [-1, 1]  # gauche, droite
+        for dy in directions:
+            ny = y1 + dy
+            if 0 <= ny < 8:
+                if plateau[x1][ny] == " " and plateau[x1 + 1][ny] == " ":
+                    # Case latérale et sa case en face sont libres
+                    intermediaire = (x1, ny)
+                    origine_str = coord_to_case(x1, y1)
+                    intermediaire_str = coord_to_case(*intermediaire)
+                    destination_str = coord_to_case(x2, y2)
+                    return origine_str + intermediaire_str + destination_str
+    # Aucun détour possible, mouvement simple
+    return coord_to_case(x1, y1) + coord_to_case(x2, y2)
+
 
 ## Execution du jeu avec mouvements aléatoires
 import random
@@ -287,7 +308,9 @@ while True:
         print(f"Ordinateur joue : {de_case + vers_case}")
         appliquer_mouvement(coup)
         afficher_plateau()
-        arduino.write((de_case + vers_case + '\n').encode())  # Encoder et ajouter \n
+        chaine = trouver_detour(coup[0], coup[1])
+        arduino.write((chaine + '\n').encode())
+  # Encoder et ajouter \n
         time.sleep(0.5)  # Attendre que l'Arduino réponde #envoyer la chaine de code ici
         i=1-i
     else:
@@ -308,7 +331,8 @@ while True:
                         afficher_plateau()
                         de_case = coord_to_case(*origine)
                         vers_case = coord_to_case(*destination)
-                        arduino.write((de_case + vers_case + '\n').encode())  # Encoder et ajouter \n
+                        chaine = trouver_detour(origine, destination)
+                        arduino.write((chaine + '\n').encode())# Encoder et ajouter \n
                         time.sleep(0.5)
                         i = 1 - i# On change de joueur seulement ici
                         break
