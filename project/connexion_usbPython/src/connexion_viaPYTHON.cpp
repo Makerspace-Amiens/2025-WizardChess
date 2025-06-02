@@ -1,31 +1,24 @@
 #include <Arduino.h>
+#include <Servo.h>
 
-const int ledPin = 13; // Broche à laquelle la LED est connectée
-
+Servo monServo;
 void setup() {
-    // Initialisation de la communication série et de la LED
-    Serial.begin(9600);
-    pinMode(ledPin, OUTPUT); // Définir la broche de la LED comme sortie
-}
+  monServo.attach(12);
+  monServo.write(0);
+  Serial.begin(9600);
+  delay(100);}
 
 void loop() {
-    // Vérifier si des données sont disponibles sur le port série
-    if (Serial.available() > 0) {
-        String command = Serial.readString(); // Lire la chaîne reçue
-        command.trim(); // Supprimer les espaces inutiles
+  monServo.write(0);
+  if (Serial.available() > 0) {
+    String received = Serial.readStringUntil('\n'); // Lis jusqu'au saut de ligne
+    Serial.print("Reçu : ");
+    Serial.println(received); // Affiche ce qui a été reçu
+    if (received[0]== 'T'){
+      monServo.write(180);
+      delay(1000);
 
-        // Vérifier les commandes reçues et allumer/éteindre la LED
-        if (command == "ON") {
-            digitalWrite(ledPin, HIGH); // Allumer la LED
-            Serial.println("LED allumée");
-        }
-        else if (command == "OFF") {
-            digitalWrite(ledPin, LOW); // Éteindre la LED
-            Serial.println("LED éteinte");
-        }
-        else {
-            Serial.println("Commande invalide");
-        }
     }
+  }
 }
 
