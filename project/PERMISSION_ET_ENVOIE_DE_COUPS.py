@@ -1,6 +1,7 @@
 # Plateau d'échecs avec placement initial des pièces
 #import envoie message vers arduino
 import serial
+import time
 arduino = serial.Serial(port='COM3', baudrate=9600, timeout=1)
 time.sleep(2)  # Attendre que l'Arduino soit prêt
 
@@ -163,7 +164,6 @@ for move in mouvements_noirs:
 
 ## Execution du jeu avec mouvements aléatoires
 import random
-import time
 
 def afficher_plateau():
     print("  A B C D E F G H")
@@ -288,7 +288,7 @@ while True:
         appliquer_mouvement(coup)
         afficher_plateau()
         arduino.write((de_case + vers_case + '\n').encode())  # Encoder et ajouter \n
-        time.sleep(15)  # Attendre que l'Arduino réponde #envoyer la chaine de code ici
+        time.sleep(0.5)  # Attendre que l'Arduino réponde #envoyer la chaine de code ici
         i=1-i
     else:
         # Tour du joueur humain
@@ -306,9 +306,11 @@ while True:
                     if ((origine, destination)) in coups_humain:
                         appliquer_mouvement((origine, destination))
                         afficher_plateau()
+                        de_case = coord_to_case(*origine)
+                        vers_case = coord_to_case(*destination)
                         arduino.write((de_case + vers_case + '\n').encode())  # Encoder et ajouter \n
-                        time.sleep(15)  # Attendre que l'Arduino réponde envoyer la chaine de code ici
-                        i = 1 - i  # On change de joueur seulement ici
+                        time.sleep(0.5)
+                        i = 1 - i# On change de joueur seulement ici
                         break
                     else:
                         print("Coup invalide. Réessayez.")

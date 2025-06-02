@@ -14,9 +14,9 @@ void loop() {
     String received = Serial.readStringUntil('\n'); // Lis jusqu'au saut de ligne
     Serial.print("Reçu : ");
     Serial.println(received); // Affiche ce qui a été reçu
-    if (received[0]== 'T'){
+    if (received[2]== 'D'){
       monServo.write(180);
-      delay(1000);
+      delay(500);
 
     }
   }
