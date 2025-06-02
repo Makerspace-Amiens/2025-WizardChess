@@ -68,19 +68,31 @@ void deplacement(char* dep, char* arr) {
 }
 
 void loop() {
+  monServo.write(40);
   if (Serial.available() > 0) {
+    monServo.write(40);
     String received = Serial.readStringUntil('\n');
     delay(100);
 
     if (received.length() == 4) {
-      char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
-      char arr[3] = {received.charAt(2), received.charAt(3), '\0'};
+  char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
+  char arr[3] = {received.charAt(2), received.charAt(3), '\0'};
 
-      deplacement(dep, arr);
-      delay(1000);
-      RetourPinitial(arr);
-      delay(1000);
-    }
+  int demiCase = STEPS_PER_REV / 2;
+
+  // Décalage latéral temporaire (par exemple à droite)
+  stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, true);
+
+  deplacement(dep, arr);
+
+  // Retour du décalage latéral
+  stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, false);
+
+  delay(1000);
+  RetourPinitial(arr);
+  delay(1000);
+}
+
 
     if (received.length() == 6) {
       char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
