@@ -26,13 +26,18 @@ void setup() {
   pinMode(DIR_PIN_Y, OUTPUT);
   pinMode(ENABLE_PIN_Y, OUTPUT);
 
+
   digitalWrite(ENABLE_PIN_X, LOW);
   digitalWrite(ENABLE_PIN_Y, LOW);
 
+  digitalWrite(DIR_PIN_X, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
+  digitalWrite(DIR_PIN_Y, HIGH); 
+
   Serial.begin(9600);
-  delay(1000);
+  delay(100);
 }
 
+// Fonction qui fait un certain nombre de pas sur un moteur donné dans une direction donnée
 void stepMotor(int stepPin, int dirPin, int steps, bool direction) {
   digitalWrite(dirPin, direction ? HIGH : LOW);
   for (int i = 0; i < abs(steps); i++) {
@@ -43,91 +48,85 @@ void stepMotor(int stepPin, int dirPin, int steps, bool direction) {
   }
 }
 
+// Fonction qui fait un seul pas, utile pour déplacement pas à pas
+void stepMotorStep(int stepPin, int dirPin, bool direction) {
+  digitalWrite(dirPin, direction ? HIGH : LOW);
+  digitalWrite(stepPin, HIGH);
+  delayMicroseconds(60000000L / (STEPS_PER_REV * RPM));
+  digitalWrite(stepPin, LOW);
+  delayMicroseconds(60000000L / (STEPS_PER_REV * RPM));
+}
 
+// Retour à la position d'origine (A1) depuis la position donnée
 void RetourPinitial(char* position) {
   monServo.write(40); // désactive l'aimantation
 
-  int xSteps = position[0] - 'A'; // 'A' à 'H' -> 0 à 7
-  int ySteps = position[1] - '1'; // '1' à '8' -> 0 à 7
+  int xSteps = position[0] - 'A'; // calcul du nombre de pas X vers origine
+  int ySteps = position[1] - '1'; // calcul du nombre de pas Y vers origine
 
-  stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, false); // vers origine X
-  stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, false); // vers origine Y
-  delay(5000);
+  // Retour vers origine, toujours dans la direction "false" (vers origine)
+  stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, false);
+  stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, false);
 }
 
 void deplacement(char* dep, char* arr) {
-  int xDeltaStart = dep[0] - 'A';
-  int yDeltaStart = dep[1] - '1';
+  const int PAS_PAR_CASE = 50;  // À ajuster selon ton moteur et ton échiquier
 
-  // Aller à la case de départ (sans aimantation)
-  stepMotor(STEP_PIN_X, DIR_PIN_X, abs(xDeltaStart), xDeltaStart > 0);
-  delay(200); // réduit
-  stepMotor(STEP_PIN_Y, DIR_PIN_Y, abs(yDeltaStart), yDeltaStart > 0);
-  delay(200); // réduit
+  int xDelta = arr[0] - dep[0];  // 'E' - 'B' = +3 colonnes
+  int yDelta = arr[1] - dep[1];  // '4' - '2' = +2 rangées
 
-  // Activer aimantation pour saisir la pièce
-  monServo.write(100);
-  delay(400); // raccourci mais laisse assez de temps
+  bool xDir = (xDelta > 0);
+  bool yDir = (yDelta > 0);
 
-  // Aller à la case d'arrivée
-  int xDeltaEnd = arr[0] - dep[0];
-  int yDeltaEnd = arr[1] - dep[1];
+  int xSteps = abs(xDelta) * PAS_PAR_CASE;
+  int ySteps = abs(yDelta) * PAS_PAR_CASE;
 
-  stepMotor(STEP_PIN_X, DIR_PIN_X, abs(xDeltaEnd), xDeltaEnd > 0);
-  delay(300); // un peu plus long car déplacement réel
-  stepMotor(STEP_PIN_Y, DIR_PIN_Y, abs(yDeltaEnd), yDeltaEnd > 0);
+  monServo.write(100); // activation aimant
   delay(300);
 
-  // Désactiver aimantation pour lâcher la pièce
-  monServo.write(40);
-  delay(200); // temps de relâchement
+  // D'abord Y
+  stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, yDir);
+
+  // Puis X
+  stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, xDir);
+
+  delay(300);
+  monServo.write(40);  // désactivation aimant
+  delay(200);
 }
-
-
-
 
 void loop() {
-  monServo.write(40);
-  if (Serial.available() > 0) {
-    monServo.write(40);
+  if (Serial.available()) {
     String received = Serial.readStringUntil('\n');
+    received.trim(); // nettoie la commande reçue
     delay(100);
+    Serial.println(received); // répond IMMÉDIATEMENT
 
+    // Puis traitement logique
     if (received.length() == 4) {
-  char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
-  char arr[3] = {received.charAt(2), received.charAt(3), '\0'};
+      char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
+      char arr[3] = {received.charAt(2), received.charAt(3), '\0'};
 
-  int demiCase = STEPS_PER_REV / 2;
+      int demiCase = STEPS_PER_REV / 2;
+      stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, true);
+      deplacement(dep, arr);
+      stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, false);
 
-  // Décalage latéral temporaire (par exemple à droite)
-  stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, true);
+      RetourPinitial(arr);
+    }
 
-  deplacement(dep, arr);
-
-  // Retour du décalage latéral
-  stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, false);
-
-  delay(1000);
-  RetourPinitial(arr);
-  delay(1000);
-}
-
-
-    if (received.length() == 6) {
+    else if (received.length() == 6) {
       char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
       char inter[3] = {received.charAt(2), received.charAt(3), '\0'};
       char arr[3] = {received.charAt(4), received.charAt(5), '\0'};
 
-      // Premier segment : départ -> intermédiaire
       deplacement(dep, inter);
-      delay(1000);
-
-      // Deuxième segment : intermédiaire -> arrivée
       deplacement(inter, arr);
-      delay(1000);
-
       RetourPinitial(arr);
-      delay(1000);
+      Serial.println("DONE");
     }
   }
 }
+
+
+

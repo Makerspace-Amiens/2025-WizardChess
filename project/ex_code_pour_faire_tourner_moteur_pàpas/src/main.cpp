@@ -6,7 +6,7 @@
 
 #define STEP_PIN_Y 3
 #define DIR_PIN_Y 6
-#define ENABLE_PIN_Y    9
+#define ENABLE_PIN_Y 9
 
 #define STEP_PIN_Z    4   
 #define DIR_PIN_Z     7 
@@ -59,8 +59,8 @@ void loop() {
   digitalWrite(DIR_PIN_X, !digitalRead(DIR_PIN_X));  // Inverser la direction
   digitalWrite(DIR_PIN_Y, !digitalRead(DIR_PIN_Y));
 }
-
- /*pour la partie Y :
+/*
+ pour la partie Y :
  
 // Définition des broches pour contrôler les moteurs pas à pas avec CNC Shield V6
 #include <Arduino.h>
@@ -103,6 +103,6 @@ void loop() {
   digitalWrite(DIR_PIN_Y, !digitalRead(DIR_PIN_Y));  // Inverser la direction
 }
 
-
+*/
  
- */
+ 

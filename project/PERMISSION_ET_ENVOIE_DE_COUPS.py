@@ -168,12 +168,12 @@ def trouver_detour(origine, destination):
 
     piece = plateau[x1][y1]
 
-    # Si ce n'est pas un pion, pas de détour
-    if piece not in ("♙", "♟︎"):
+    # pas de détour
+    if piece in ("♙", "♟","♔","♚"):
         return coord_to_case(x1, y1) + coord_to_case(x2, y2)
 
     # Sens de déplacement : -1 pour les noirs (vers le haut), +1 pour les blancs (vers le bas)
-    direction = 1 if piece == "♙" else -1
+    direction = 1 if piece in ("♙", "♘", "♗", "♕", "♖") else -1
     x_front = x1 + direction
 
     # Vérifie que la case devant existe
@@ -309,31 +309,38 @@ afficher_plateau()
 
 # --- BOUCLE DE JEU ---
 while True:
-    if i==0:# Tour de l'ordinateur
+    if i == 0:  # Tour de l'ordinateur
         print(f"\nL'ordinateur ({ordinateur}) réfléchit...")
         time.sleep(1)
-
         coups_ordi = obtenir_mouvements(ordinateur)
         if not coups_ordi:
             print(f"{ordinateur.capitalize()} ne peut plus jouer. Partie terminée.")
+            arduino.close()
+            print("Connexion série fermée.")
             break
 
         coup = jouer_coup_ordinateur_intelligent(ordinateur)
-        de_case = coord_to_case(*coup[0])
-        vers_case = coord_to_case(*coup[1])
+        origine, destination = coup
+        de_case = coord_to_case(*origine)
+        vers_case = coord_to_case(*destination)
         print(f"Ordinateur joue : {de_case + vers_case}")
         appliquer_mouvement(coup)
         afficher_plateau()
-        chaine = trouver_detour(coup[0], coup[1])
+        chaine = trouver_detour(origine, destination)
         arduino.write((chaine + '\n').encode())
-  # Encoder et ajouter \n
-        time.sleep(0.5)  # Attendre que l'Arduino réponde #envoyer la chaine de code ici
-        i=1-i
+        arduino.flush()
+        time.sleep(1)
+        reponse = arduino.readline().decode().strip()
+        print(f"Reçu depuis Arduino : {reponse}")
+        i = 1 - i
     else:
         # Tour du joueur humain
         coups_humain = obtenir_mouvements(humain)
         if not coups_humain:
             print(f"{humain.capitalize()} ne peut plus jouer. Partie terminée.")
+            # --- Fin de la partie ---
+            arduino.close()
+            print("Connexion série fermée.")
             break
 
         while True:
@@ -351,7 +358,12 @@ while True:
                 afficher_plateau()
                 chaine = trouver_detour(origine, destination)
                 arduino.write((chaine + '\n').encode())
-                time.sleep(0.5)
+                arduino.flush()
+                time.sleep(1)  # ou essaie un délai plus court si possible
+                reponse = arduino.readline().decode().strip()
+                print(f"Reçu depuis Arduino : {reponse}")
+
+
                 i = 1 - i  # Changer de joueur uniquement si le coup est valide
                 break
             else:
