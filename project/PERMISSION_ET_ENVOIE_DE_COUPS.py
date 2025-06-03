@@ -2,7 +2,7 @@
 #import envoie message vers arduino
 import serial
 import time
-arduino = serial.Serial(port='COM3', baudrate=9600, timeout=1)
+arduino = serial.Serial(port='COM4', baudrate=9600, timeout=1)
 time.sleep(2)  # Attendre que l'Arduino soit prêt
 
 plateau = [
@@ -67,7 +67,7 @@ def mouvements_roi(x, y):
                 continue
             nx, ny = x + dx, y + dy
             if 0 <= nx < 8 and 0 <= ny < 8:
-                cible = plateau[nx][ny]
+                cible = plateau[nx][ny]+
                 if cible == " " or cible in ennemis:
                     mouvements.append((nx, ny))
     return mouvements

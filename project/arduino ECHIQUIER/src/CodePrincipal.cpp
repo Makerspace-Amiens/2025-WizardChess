@@ -70,7 +70,7 @@ void RetourPinitial(char* position) {
 }
 
 void deplacement(char* dep, char* arr) {
-  const int PAS_PAR_CASE = 50;  // À ajuster selon ton moteur et ton échiquier
+  const int PAS_PAR_CASE = 120;  // À ajuster selon ton moteur et ton échiquier
 
   int xDelta = arr[0] - dep[0];  // 'E' - 'B' = +3 colonnes
   int yDelta = arr[1] - dep[1];  // '4' - '2' = +2 rangées
