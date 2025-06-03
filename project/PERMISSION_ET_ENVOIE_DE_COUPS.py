@@ -166,21 +166,37 @@ def trouver_detour(origine, destination):
     x1, y1 = origine
     x2, y2 = destination
 
-    if plateau[x1 + 1][y1] != " ":
-        # case devant occupée
-        directions = [-1, 1]  # gauche, droite
-        for dy in directions:
+    piece = plateau[x1][y1]
+
+    # Si ce n'est pas un pion, pas de détour
+    if piece not in ("♙", "♟︎"):
+        return coord_to_case(x1, y1) + coord_to_case(x2, y2)
+
+    # Sens de déplacement : -1 pour les noirs (vers le haut), +1 pour les blancs (vers le bas)
+    direction = 1 if piece == "♙" else -1
+    x_front = x1 + direction
+
+    # Vérifie que la case devant existe
+    if not (0 <= x_front < 8):
+        return coord_to_case(x1, y1) + coord_to_case(x2, y2)
+
+    # Si la case devant est occupée
+    if plateau[x_front][y1] != " ":
+        for dy in [-1, 1]:  # Essaye à gauche puis à droite
             ny = y1 + dy
             if 0 <= ny < 8:
-                if plateau[x1][ny] == " " and plateau[x1 + 1][ny] == " ":
-                    # Case latérale et sa case en face sont libres
+                # Vérifie que la case à côté ET sa case en face sont libres
+                if plateau[x1][ny] == " " and plateau[x_front][ny] == " ":
                     intermediaire = (x1, ny)
-                    origine_str = coord_to_case(x1, y1)
-                    intermediaire_str = coord_to_case(*intermediaire)
-                    destination_str = coord_to_case(x2, y2)
-                    return origine_str + intermediaire_str + destination_str
-    # Aucun détour possible, mouvement simple
+                    return (
+                        coord_to_case(x1, y1)
+                        + coord_to_case(*intermediaire)
+                        + coord_to_case(x2, y2)
+                    )
+
+    # Sinon, mouvement normal
     return coord_to_case(x1, y1) + coord_to_case(x2, y2)
+
 
 
 ## Execution du jeu avec mouvements aléatoires
@@ -326,20 +342,21 @@ while True:
                 try:
                     origine = case_to_coord(coup_txt[:2])
                     destination = case_to_coord(coup_txt[2:])
-                    if ((origine, destination)) in coups_humain:
-                        appliquer_mouvement((origine, destination))
-                        afficher_plateau()
-                        de_case = coord_to_case(*origine)
-                        vers_case = coord_to_case(*destination)
-                        chaine = trouver_detour(origine, destination)
-                        arduino.write((chaine + '\n').encode())# Encoder et ajouter \n
-                        time.sleep(0.5)
-                        i = 1 - i# On change de joueur seulement ici
-                        break
-                    else:
-                        print("Coup invalide. Réessayez.")
-                except:
+                except Exception as e:
                     print("Format incorrect. Réessayez.")
+                    continue  # Recommence la boucle
+
+            if (origine, destination) in coups_humain:
+                appliquer_mouvement((origine, destination))
+                afficher_plateau()
+                chaine = trouver_detour(origine, destination)
+                arduino.write((chaine + '\n').encode())
+                time.sleep(0.5)
+                i = 1 - i  # Changer de joueur uniquement si le coup est valide
+                break
             else:
-                print("Format invalide. Entrez un coup comme E2E4.")
+                print("Coup invalide. Réessayez.")
+        else:
+            print("Format invalide. Entrez un coup comme E2E4.")
+
 

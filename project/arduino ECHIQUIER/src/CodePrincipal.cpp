@@ -30,6 +30,7 @@ void setup() {
   digitalWrite(ENABLE_PIN_Y, LOW);
 
   Serial.begin(9600);
+  delay(1000);
 }
 
 void stepMotor(int stepPin, int dirPin, int steps, bool direction) {
@@ -42,6 +43,7 @@ void stepMotor(int stepPin, int dirPin, int steps, bool direction) {
   }
 }
 
+
 void RetourPinitial(char* position) {
   monServo.write(40); // désactive l'aimantation
 
@@ -50,22 +52,39 @@ void RetourPinitial(char* position) {
 
   stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, false); // vers origine X
   stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, false); // vers origine Y
+  delay(5000);
 }
 
 void deplacement(char* dep, char* arr) {
-  int xDelta = arr[0] - dep[0];
-  int yDelta = arr[1] - dep[1];
+  int xDeltaStart = dep[0] - 'A';
+  int yDeltaStart = dep[1] - '1';
 
-  monServo.write(100); // active l'aimantation
-  delay(100);
+  // Aller à la case de départ (sans aimantation)
+  stepMotor(STEP_PIN_X, DIR_PIN_X, abs(xDeltaStart), xDeltaStart > 0);
+  delay(200); // réduit
+  stepMotor(STEP_PIN_Y, DIR_PIN_Y, abs(yDeltaStart), yDeltaStart > 0);
+  delay(200); // réduit
 
-  stepMotor(STEP_PIN_X, DIR_PIN_X, abs(xDelta), xDelta > 0);
-  delay(100);
-  stepMotor(STEP_PIN_Y, DIR_PIN_Y, abs(yDelta), yDelta > 0);
+  // Activer aimantation pour saisir la pièce
+  monServo.write(100);
+  delay(400); // raccourci mais laisse assez de temps
 
-  delay(1000);
-  monServo.write(40); // désactive l'aimantation
+  // Aller à la case d'arrivée
+  int xDeltaEnd = arr[0] - dep[0];
+  int yDeltaEnd = arr[1] - dep[1];
+
+  stepMotor(STEP_PIN_X, DIR_PIN_X, abs(xDeltaEnd), xDeltaEnd > 0);
+  delay(300); // un peu plus long car déplacement réel
+  stepMotor(STEP_PIN_Y, DIR_PIN_Y, abs(yDeltaEnd), yDeltaEnd > 0);
+  delay(300);
+
+  // Désactiver aimantation pour lâcher la pièce
+  monServo.write(40);
+  delay(200); // temps de relâchement
 }
+
+
+
 
 void loop() {
   monServo.write(40);
