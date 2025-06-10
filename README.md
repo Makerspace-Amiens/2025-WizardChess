@@ -1,11 +1,18 @@
-# Code-Projet-Echec
-Pour la commande d'un rail sous un échiquier physique.
-Pour l'instant : initialisation d'un tableau pour mémoriser la place des pièces
-Seuls les mouvements mécaniques sont commandés en donnant une position d'arrivée et une position de départ arbitrairement sans vérifier la logique.
- 
+# Le jeu des sorciers 
+## le jeu d'échecs où les pièces se déplacent toutes seules.
 
-Nous accueillons et apprécions toute contribution. Si vous souhaitez contribuer, veuillez consulter notre guide de contribution pour connaître nos attentes et notre processus.
+# Introduction 
+Dans le cadre d'un projet de 70 heures réparties sur le second semestre, dont le thème était "les échecs dans Harry Potter", 
 
-## Contact
+# Plateau Automatisé 
+projets existants : 
 
-Si vous avez des questions ou des suggestions, n'hésitez pas à nous contacter.
+# Projet : Solutions techniques et répartition des tâches
+
+## Software 
+
+## Hardware
+
+# Réalisation Finale 
+
+# Axes d'améliorations et d'évolutions 
