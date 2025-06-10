@@ -67,7 +67,7 @@ def mouvements_roi(x, y):
                 continue
             nx, ny = x + dx, y + dy
             if 0 <= nx < 8 and 0 <= ny < 8:
-                cible = plateau[nx][ny]+
+                cible = plateau[nx][ny]
                 if cible == " " or cible in ennemis:
                     mouvements.append((nx, ny))
     return mouvements
@@ -210,11 +210,11 @@ def afficher_plateau():
             print(case if case != " " else ".", end=" ")
         print()
     print()
-
 def case_to_coord(case):
     colonne = ord(case[0].upper()) - ord('A')
     ligne = 8 - int(case[1])
     return (ligne, colonne)
+
 
 def coord_to_case(x, y):
     return chr(ord('A') + y) + str(8 - x)
@@ -326,12 +326,12 @@ while True:
         print(f"Ordinateur joue : {de_case + vers_case}")
         appliquer_mouvement(coup)
         afficher_plateau()
-        chaine = trouver_detour(origine, destination)
-        arduino.write((chaine + '\n').encode())
-        arduino.flush()
-        time.sleep(1)
-        reponse = arduino.readline().decode().strip()
-        print(f"Reçu depuis Arduino : {reponse}")
+        #if chaine[2]!='A'and chaine[2]!='H'and chaine[0]!='A' and chaine[0]!='H' and chaine[1]!='1' and chaine[1]!='8' and chaine[3]!='1' and chaine[3]!='8':
+            #arduino.write((chaine + '\n').encode())
+            #arduino.flush()
+            #time.sleep(1)  # ou essaie un délai plus court si possible
+            #reponse = arduino.readline().decode().strip()
+            #print(f"Reçu depuis Arduino : {reponse}")
         i = 1 - i
     else:
         # Tour du joueur humain
@@ -339,7 +339,7 @@ while True:
         if not coups_humain:
             print(f"{humain.capitalize()} ne peut plus jouer. Partie terminée.")
             # --- Fin de la partie ---
-            arduino.close()
+            #arduino.close()
             print("Connexion série fermée.")
             break
 
@@ -360,8 +360,7 @@ while True:
                 arduino.write((chaine + '\n').encode())
                 arduino.flush()
                 time.sleep(1)  # ou essaie un délai plus court si possible
-                reponse = arduino.readline().decode().strip()
-                print(f"Reçu depuis Arduino : {reponse}")
+
 
 
                 i = 1 - i  # Changer de joueur uniquement si le coup est valide

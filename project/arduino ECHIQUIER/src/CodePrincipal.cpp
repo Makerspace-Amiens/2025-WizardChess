@@ -1,18 +1,22 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define STEP_PIN_X    2
-#define DIR_PIN_X     5
-#define ENABLE_PIN_X  8
+#define STEP_PIN_X    3
+#define DIR_PIN_X     6
+#define ENABLE_PIN_X  9
 
-#define STEP_PIN_Y    3
-#define DIR_PIN_Y     6
-#define ENABLE_PIN_Y  9
+#define STEP_PIN_Y    2
+#define DIR_PIN_Y     5
+#define ENABLE_PIN_Y  8
 
+bool dirX, dirY;
 #define STEPS_PER_REV 200
 #define RPM           60
 
 Servo monServo;
+
+const int PAS_PAR_CASE = 250;
+int i = 0;
 
 void setup() {
   monServo.attach(12);
@@ -26,18 +30,16 @@ void setup() {
   pinMode(DIR_PIN_Y, OUTPUT);
   pinMode(ENABLE_PIN_Y, OUTPUT);
 
-
   digitalWrite(ENABLE_PIN_X, LOW);
   digitalWrite(ENABLE_PIN_Y, LOW);
 
-  digitalWrite(DIR_PIN_X, HIGH);  // HIGH pour tourner dans un sens, LOW pour l'autre sens
-  digitalWrite(DIR_PIN_Y, HIGH); 
+  digitalWrite(DIR_PIN_X, HIGH);
+  digitalWrite(DIR_PIN_Y, HIGH);
 
   Serial.begin(9600);
   delay(100);
 }
 
-// Fonction qui fait un certain nombre de pas sur un moteur donné dans une direction donnée
 void stepMotor(int stepPin, int dirPin, int steps, bool direction) {
   digitalWrite(dirPin, direction ? HIGH : LOW);
   for (int i = 0; i < abs(steps); i++) {
@@ -48,85 +50,76 @@ void stepMotor(int stepPin, int dirPin, int steps, bool direction) {
   }
 }
 
-// Fonction qui fait un seul pas, utile pour déplacement pas à pas
-void stepMotorStep(int stepPin, int dirPin, bool direction) {
-  digitalWrite(dirPin, direction ? HIGH : LOW);
-  digitalWrite(stepPin, HIGH);
-  delayMicroseconds(60000000L / (STEPS_PER_REV * RPM));
-  digitalWrite(stepPin, LOW);
-  delayMicroseconds(60000000L / (STEPS_PER_REV * RPM));
-}
+void retourAOrigine(char* positionActuelle) {
+  monServo.write(40); // désactive l'aimant
 
-// Retour à la position d'origine (A1) depuis la position donnée
-void RetourPinitial(char* position) {
-  monServo.write(40); // désactive l'aimantation
+  int xDelta = positionActuelle[0] - 'B'; // origine colonne B
+  int yDelta = positionActuelle[1] - '2'; // origine ligne 2
 
-  int xSteps = position[0] - 'A'; // calcul du nombre de pas X vers origine
-  int ySteps = position[1] - '1'; // calcul du nombre de pas Y vers origine
-
-  // Retour vers origine, toujours dans la direction "false" (vers origine)
-  stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, false);
-  stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, false);
-}
-
-void deplacement(char* dep, char* arr) {
-  const int PAS_PAR_CASE = 120;  // À ajuster selon ton moteur et ton échiquier
-
-  int xDelta = arr[0] - dep[0];  // 'E' - 'B' = +3 colonnes
-  int yDelta = arr[1] - dep[1];  // '4' - '2' = +2 rangées
-
-  bool xDir = (xDelta > 0);
-  bool yDir = (yDelta > 0);
+  bool retourX = (xDelta > 0); // si on est à droite, revenir à gauche
+  bool retourY = (yDelta < 0); // si on est plus haut, revenir en bas
 
   int xSteps = abs(xDelta) * PAS_PAR_CASE;
   int ySteps = abs(yDelta) * PAS_PAR_CASE;
 
-  monServo.write(100); // activation aimant
-  delay(300);
+  stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, retourX);
+  stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, retourY);
+}
 
-  // D'abord Y
-  stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, yDir);
+void deplacement(char* dep, char* arr) {
+  int xDelta = arr[0] - dep[0];
+  int yDelta = arr[1] - dep[1];
 
-  // Puis X
-  stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, xDir);
+  dirX = (xDelta < 0);
+  dirY = (yDelta > 0);
 
-  delay(300);
-  monServo.write(40);  // désactivation aimant
-  delay(200);
+  int xSteps = abs(xDelta) * PAS_PAR_CASE;
+  int ySteps = abs(yDelta) * PAS_PAR_CASE;
+
+  stepMotor(STEP_PIN_Y, DIR_PIN_Y, ySteps, dirY);
+  stepMotor(STEP_PIN_X, DIR_PIN_X, xSteps, dirX);
 }
 
 void loop() {
   if (Serial.available()) {
     String received = Serial.readStringUntil('\n');
-    received.trim(); // nettoie la commande reçue
+    received.trim();
     delay(100);
-    Serial.println(received); // répond IMMÉDIATEMENT
+    Serial.println(received);
+    i++;
 
-    // Puis traitement logique
     if (received.length() == 4) {
       char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
       char arr[3] = {received.charAt(2), received.charAt(3), '\0'};
+      char origin[3] = {'B', '2', '\0'};  // position de repos
 
-      int demiCase = STEPS_PER_REV / 2;
-      stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, true);
-      deplacement(dep, arr);
-      stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, false);
+      deplacement(origin, dep);
 
-      RetourPinitial(arr);
+      if (i < 16 && received[0] == received[3]) {
+        monServo.write(100); // active l'aimant
+        deplacement(dep, arr);
+        retourAOrigine(arr);
+      } else {
+        int demiCase = PAS_PAR_CASE / 2;
+        monServo.write(100);
+        stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, true);  // avance d'une demi-case
+        deplacement(dep, arr);
+        stepMotor(STEP_PIN_X, DIR_PIN_X, demiCase, false); // recule d'une demi-case
+        retourAOrigine(arr);
+      }
     }
 
     else if (received.length() == 6) {
       char dep[3] = {received.charAt(0), received.charAt(1), '\0'};
       char inter[3] = {received.charAt(2), received.charAt(3), '\0'};
       char arr[3] = {received.charAt(4), received.charAt(5), '\0'};
+      char origin[3] = {'B', '2', '\0'};
 
+      deplacement(origin, dep);
+      monServo.write(100);
       deplacement(dep, inter);
       deplacement(inter, arr);
-      RetourPinitial(arr);
-      Serial.println("DONE");
+      retourAOrigine(arr);
     }
   }
 }
-
-
-
