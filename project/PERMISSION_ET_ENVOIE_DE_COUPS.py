@@ -199,7 +199,7 @@ def trouver_detour(origine, destination):
 
 
 
-## Execution du jeu avec mouvements aléatoires
+# Execution du jeu avec mouvements aléatoires SEPARATION
 import random
 
 def afficher_plateau():
@@ -310,7 +310,7 @@ afficher_plateau()
 # --- BOUCLE DE JEU ---
 while True:
     if i == 0:  # Tour de l'ordinateur
-        print(f"\nL'ordinateur ({ordinateur}) réfléchit...")
+        print(f"\nRon Weasley ({ordinateur}) réfléchit...")
         time.sleep(1)
         coups_ordi = obtenir_mouvements(ordinateur)
         if not coups_ordi:
@@ -323,7 +323,7 @@ while True:
         origine, destination = coup
         de_case = coord_to_case(*origine)
         vers_case = coord_to_case(*destination)
-        print(f"Ordinateur joue : {de_case + vers_case}")
+        print(f"Ron Weasley joue : {de_case + vers_case}")
         appliquer_mouvement(coup)
         afficher_plateau()
         #if chaine[2]!='A'and chaine[2]!='H'and chaine[0]!='A' and chaine[0]!='H' and chaine[1]!='1' and chaine[1]!='8' and chaine[3]!='1' and chaine[3]!='8':
@@ -339,7 +339,7 @@ while True:
         if not coups_humain:
             print(f"{humain.capitalize()} ne peut plus jouer. Partie terminée.")
             # --- Fin de la partie ---
-            #arduino.close()
+            arduino.close()
             print("Connexion série fermée.")
             break
 
