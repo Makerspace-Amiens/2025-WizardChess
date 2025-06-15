@@ -62,3 +62,7 @@ Permet de donner une interface de jeu accessible et de visualiser l'etat du plat
 ### Le code Arduino
 
 Ce code veille à la rotation des moteurs et à l'activation de l'aimantation selon les instructions du code Python (programme lourd).
+
+Les axes d'amélioration possible :
+
+![MATERIEL](images/evolutions.png)
