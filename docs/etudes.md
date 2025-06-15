@@ -34,7 +34,7 @@ Implentation d'aimant sous les pièces :
 
 ![aimant sous les pieces](images/Aimant_sous_piece.png)
 
-Chaque pièce du jeu a dû être dessiné pour y intégrer un espace pour l'aimant. Pour qu'elles soient reconnaissables au premier coup d'œil, les pièces ont des formes plutôt classiques, bien que la reine et le roi aient été faits pour être différenciés plus facilement.
+Chaque pièce du jeu a dû être dessiné pour y intégrer un espace pour l'aimant. Pour qu'elles soient reconnaissables au premier coup d'œil, les pièces ont des formes plutôt classiques, bien que la reine et le roi aient été faits pour être différenciés plus facilement. Elles ont les dimensions standards définies par la Fédération internationale des échecs. 
 
 ## Matériels utilisés et explications
 
