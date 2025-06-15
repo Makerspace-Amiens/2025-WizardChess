@@ -21,7 +21,7 @@ Tout au long du projet, nous avons bénéficié de l’accompagnement de nos ens
 
 ## Objectifs du Projet
 
-L’objectif principal de notre projet est de concevoir **un échiquier interactif et automatisé**, intégrant une interface de jeu développée en Python. Ce système permettra de jouer une partie complète d’échecs contre une intelligence artificielle incarnant **Ron Weasley**, personnage emblématique de l’univers de Harry Potter, connu pour sa manière atypique et stratégique de jouer aux échecs dans la saga.
+L’objectif principal de notre projet est de concevoir **un échiquier interactif et automatisé**, intégrant une interface de jeu développée en Python. Ce système permettra de jouer une partie complète d’échecs contre une intelligence artificielle incarnant **Ron Weasley**, personnage emblématique de l’univers de **Harry Potter**, connu pour sa manière atypique et stratégique de jouer aux échecs dans la saga.
 
 Notre échiquier doit offrir une expérience de jeu fluide, ludique et immersive, fidèle à l’esprit du jeu d’échecs version sorcier. L’utilisateur pourra choisir l’équipe qu’il souhaite contrôler (blancs ou noirs), et interagir avec le plateau tout au long de la partie. Les déplacements des pièces seront réalisés automatiquement, de manière précise et visible, pour renforcer l’aspect interactif et magique du jeu.
 
@@ -29,13 +29,14 @@ Notre échiquier doit offrir une expérience de jeu fluide, ludique et immersive
 
 Avant de lancer la conception de notre propre échiquier, nous avons étudié plusieurs projets existants. Cette démarche avait pour double objectif de valider la faisabilité technique de notre idée et d’identifier des solutions techniques réutilisables, que nous pourrions adapter à notre propre réalisation.
 
-Nous nous sommes notamment appuyés sur des projets disponibles sur une plateforme spécialisée, où sont présentés divers systèmes de dessin en 2D. Ces dispositifs utilisent un mécanisme de déplacement du crayon basé sur des rails, similaire à celui utilisé dans les imprimantes 3D. Ce principe de mouvement nous a inspirés pour concevoir notre propre système de déplacement des pièces sur l’échiquier, en adaptant cette méthode pour guider un outil ou un support magnétique avec précision.
+Nous nous sommes notamment appuyés sur des projets disponibles sur [Machine That Draws](https://makerspace-amiens.fr/machines-that-draws/), où sont présentés divers systèmes de dessin en 2D. Ces dispositifs utilisent un mécanisme de déplacement du crayon basé sur des rails, similaire à celui utilisé dans les imprimantes 3D. Ce principe de mouvement nous a inspirés pour concevoir notre propre système de déplacement des pièces sur l’échiquier, en adaptant cette méthode pour guider un outil ou un support magnétique avec précision.
 
 
 ![projet](images/projet_etudiant_echiquier.png)
 Par ailleurs, nous avons identifié une vidéo d'un [projet étudiant](https://www.youtube.com/watch?v=JUX-hgx_V8Y) présentant brièvement un échiquier dont les pièces sont déplacées grâce à un système d’aimantation, une solution simple et efficace que nous avons également envisagée pour notre prototype.
 
 ![SQUARE OFF](images/square_off.png)
+
 Enfin, nous avons étudié le projet commercial [SQUARE OFF](https://www.youtube.com/watch?v=o2S4PgmExDY&t=19s), un échiquier connecté qui fonctionne via Wi-Fi ou Bluetooth grâce à une application dédiée. Il repose lui aussi sur un système d’aimantation pour déplacer les pièces automatiquement. Ce produit se distingue par sa compacité, son silence de fonctionnement, et son ergonomie, ce qui nous a donné des repères concrets pour évaluer notre propre conception en termes de design et de performance.
 
 # Cahier des Charges

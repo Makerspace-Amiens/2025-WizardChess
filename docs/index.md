@@ -6,31 +6,23 @@ title: Accueil
 
 # Bienvenue sur notre documentation
 
-Bienvenue dans la documentation du projet XY. Ce site a pour but de fournir toutes les informations nécessaires pour comprendre, utiliser et reproduire efficacement notre projet.
+Bienvenue dans la documentation du projet **Echecs version sorcier**. Ce site a pour but de fournir toutes les informations nécessaires pour comprendre, utiliser et reproduire efficacement notre projet.
 
-![Illustration vectorielle colorée avec un fond blanc, montrant un atelier équipé pour un projet de conception mécanique, électronique et informatique](images/illustration.png)
+![Illustration vectorielle colorée avec un fond blanc, montrant un atelier équipé pour un projet de conception mécanique, électronique et informatique](images/harry-potter-chess-set-1024x674.png)
 
 ## À propos du Projet
 
-Décrivez ici en quelques lignes l'objectif et l'aperçu général de votre projet. Quel est son but ? À qui est-il destiné ? Quels problèmes cherche-t-il à résoudre ?
+Notre projet s’inspire directement de la scène mythique du premier film **Harry Potter à l'école des sorciers**, dans laquelle les trois personnages principaux — Harry, Hermione et Ron — sont confrontés à une partie d’échecs grandeur nature, où les pièces se déplacent d’elles-mêmes de manière spectaculaire.
+
+Dans cette scène, les déplacements sont commandés par la voix, renforçant l’aspect magique et immersif de l’univers. Cette représentation impressionnante nous a fortement marqués, et nous avons souhaité reproduire ce type d’interaction dans notre propre échiquier.
+
+
 
 ## Poster
 
-Ici vous publierez le poster de votre projet.
-
-![Poster projet](images/poster.jpg)
+![Poster projet](images/notre_poster.jpg)
 
 ## Vidéo
-
-Ici vous publierez la vidéo de votre projet. 
-- Moins de 1min30
-- Présentation du projet 
-- Des explication du fonctionnement du projet
-- Des vues du projet / Prototype / Application etc... 
-- Des plans du fonctionnement (même basique ou des éléments séparés)
-- Une conclusion
-- Si en stockage local : <50mo
-
-<video src="images/intro_amiens.mp4" controls title="Title"  style="width: 100%;"></video>
+<video src="images/Vidéo_COASNE_CHARREYRON.mp4" controls title="Title"  style="width: 100%;"></video>
 
 ---
