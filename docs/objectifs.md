@@ -6,7 +6,7 @@ title: Objectifs du projet
 
 # Introduction
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.
+Notre projet du 2nd semestre entant que I3 de notre école UniLaSalle à Amiens consiste en la création d'un échiquier stylisé et orienté sur le thème d'Harry Potter. Nous allons respecter cet univers en intègrant un système de déplacement automatique des pièces. 
 
 ## Contexte du Projet
 
