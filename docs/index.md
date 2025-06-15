@@ -8,7 +8,7 @@ title: Accueil
 
 Bienvenue dans la documentation du projet **Echecs version sorcier**. Ce site a pour but de fournir toutes les informations nécessaires pour comprendre, utiliser et reproduire efficacement notre projet.
 
-![Illustration vectorielle colorée avec un fond blanc, montrant un atelier équipé pour un projet de conception mécanique, électronique et informatique](images/harry-potter-chess-set-1024x674.png)
+![illustation harry potter](images/harry-potter-chess-set-1024x674.png)
 
 ## À propos du Projet
 
@@ -26,3 +26,12 @@ Dans cette scène, les déplacements sont commandés par la voix, renforçant l�
 <video src="images/Vidéo_COASNE_CHARREYRON.mp4" controls title="Title"  style="width: 100%;"></video>
 
 ---
+
+## Notice
+
+Pour jouer : il faut respecter certaines etapes ci-dessous :
+- Placer manuellement le chariot sous la case "A1" (position de référence).
+- Alimenter grâce à une source externe la carte Arduino (On ne peut plus déplacer manuellement le chariot).
+- Brancher la carte arduino à un ordinateur via un port USB.
+- Executer le programme intitulé "Mouvements_possibles.py"
+- Jouer :)
