@@ -8,7 +8,7 @@ title: Accueil
 
 Bienvenue dans la documentation du projet **Echecs version sorcier**. Ce site a pour but de fournir toutes les informations nécessaires pour comprendre, utiliser et reproduire efficacement notre projet.
 
-![illustation harry potter](images/harry-potter-chess-set-1024x674.png)
+![illustation harry potter](images/harry-potter-chess-set-1024x674.jpg)
 
 ## À propos du Projet
 
@@ -20,7 +20,7 @@ Dans cette scène, les déplacements sont commandés par la voix, renforçant l�
 
 ## Poster
 
-![Poster projet](images/notre_poster.jpg)
+![Poster projet](images/notre_poster.png)
 
 ## Vidéo
 <video src="images/Vidéo_COASNE_CHARREYRON.mp4" controls title="Title"  style="width: 100%;"></video>

@@ -39,7 +39,7 @@ Comme indiqué au-dessus nous avons besoin d'un servomoteur qui est contrôlé p
 
 Le déplacement du rail 2D situé sous l’échiquier nécessite l’utilisation de deux moteurs pas à pas, contrôlés par une carte Arduino UNO couplée à un CNC Shield, qui permet d’adapter les tensions nécessaires au bon fonctionnement des moteurs. Des drivers sont également utilisés afin de réguler et dissiper l’énergie produite par les moteurs, tout en assurant leur protection et leur stabilité pendant les déplacements.
 
-![MATERIEL](images/matériel_moteur_pas_a_pas.png)
+![MATERIEL](images/matériel_moteurs_pas_a_pas.png)
 ![MATERIEL](images/cnc.png)
 
 On a utilisé des tiges pour consolider notre rail et faire que l'assemblage tienne le coup tout du long lors de l'utilisation lors d'une partie.
