@@ -23,7 +23,7 @@ Cette petite touche de couleur et de lumière permettrait de savoir où en est l
 
 4. Boutons de fonctionnalités
 Le plateau pourrait intégrer des boutons utiles comme : 
-- un bouton "retour en arrière" pour retrouver la dispositions des pièces svant le coup joué
+- un bouton "retour en arrière" pour retrouver la dispositions des pièces avant le coup joué
 - un bouton permettant de définir une situation initiale. Les joueurs pourraient disposer les pièces comme ils le souhaitent et le bouton permettrait de commncer la partie de là.
 - un bouton de sauvegarde qui enregistre la disposition des pièces pour reprendre la partie plus tard. 
 
