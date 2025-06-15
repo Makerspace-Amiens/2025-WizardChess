@@ -8,7 +8,7 @@ title: Pistes d'évolution
 
 ![MATERIEL](images/evolutions.png)
 
-Notre projet a été réalisé dans un temps impartis. Mais si nous avions eu plus de temps, qu'aurai-t-on pu ajouter ? 
+Notre projet a été réalisé dans un temps impartis. Mais si nous avions eu plus de temps, qu'aurait-il été possible d'ajouter ?
 
 1. Une commande vocale
 Nous pourrions intégrer une reconnaissance vocale permettant de donner ses coups au logiciel en la prononçant à heute voix. Cette fonctionnalité permettrait également de rapprocher les joueurs de l'expérience d'Harry Potter
