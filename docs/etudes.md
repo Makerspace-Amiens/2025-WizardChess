@@ -19,19 +19,22 @@ Le logiciel de modélisation utilisé est **Onshape**.
 
 Pour adapter au mieux notre espace, on a fait imprimer en 3D chaque pièces du rail, ainsi que les pièces de jeu.
 
-## Nous allons imprimer les pièces d'echecs et les éléments du rail grâce à l'imprimante 3D
+## Nous avons imprimé les pièces d'échecs et les éléments du rail en 3D
 
 Schéma du rail 2D se situant sous le plateau de jeu :
 
 ![schema](images/schema_rail.png)
 
-Au centre, on peut voir le chariot central qui portera le servomoteur (situé à droite de l'image) et qui elevera une platforme magnétique pour activer l'aimantation ou l'abaissera pour désactiver l'aimantation.
+Chaque barre noire est une tige en aluminium, les carrés bleus des moteurs pas-à-pas et les traits rouges les courroies.
+Au centre, on peut voir le chariot central qui transporte le servomoteur (situé à droite de l'image) qui lui élèvera une platforme magnétique pour activer l'aimantation ou l'abaissera pour désactiver l'aimantation.
 
 ## Nous avons décidé de mettre en place un système de déplacement via activation ou désactivation de l'aimantation
 
 Implentation d'aimant sous les pièces :
 
 ![aimant sous les pieces](images/Aimant_sous_piece.png)
+
+Chaque pièce du jeu a dû être dessiné pour y intégrer un espace pour l'aimant. Pour qu'elles soient reconnaissables au premier coup d'œil, les pièces ont des formes plutôt classiques, bien que la reine et le roi aient été faits pour être différenciés plus facilement.
 
 ## Matériels utilisés et explications
 
@@ -62,7 +65,3 @@ Permet de donner une interface de jeu accessible et de visualiser l'etat du plat
 ### Le code Arduino
 
 Ce code veille à la rotation des moteurs et à l'activation de l'aimantation selon les instructions du code Python (programme lourd).
-
-Les axes d'amélioration possible :
-
-![MATERIEL](images/evolutions.png)
